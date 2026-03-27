@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ustp-primary: #1d3557;
+  --color-ustp-accent: #e63946;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-safe: #10b981;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-slate-950 text-slate-200 m-0 overflow-hidden font-sans antialiased;
+}
