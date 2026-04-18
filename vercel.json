@@ -5,7 +5,7 @@
   "env": {
     "VITE_API_URL": {
       "description": "Backend API URL",
-      "value": "https://ustp-flood-backend.onrender.com/api"
+      "value": "https://digitaltwinflood-gui.onrender.com/api"
     }
   }
 }
