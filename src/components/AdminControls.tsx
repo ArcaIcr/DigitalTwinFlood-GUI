@@ -2,6 +2,8 @@ import { Settings2, Download, X, Lock } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
 interface RiskThresholds {
   moderate_threshold: number;
   high_threshold: number;
@@ -19,7 +21,7 @@ const AdminControls = () => {
 
   const handleGenerateReport = async (format: 'json' | 'csv') => {
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/report?format=${format}`, {
+      const response = await fetch(`${API_BASE_URL}/admin/report?format=${format}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -56,7 +58,7 @@ const AdminControls = () => {
 
   const handleLoadThresholds = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin/thresholds', {
+      const response = await fetch(`${API_BASE_URL}/admin/thresholds`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -73,7 +75,7 @@ const AdminControls = () => {
   const handleSaveThresholds = async () => {
     setIsSaving(true);
     try {
-      const response = await fetch('http://localhost:3001/api/admin/thresholds', {
+      const response = await fetch(`${API_BASE_URL}/admin/thresholds`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
