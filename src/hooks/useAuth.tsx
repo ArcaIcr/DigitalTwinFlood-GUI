@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
+import type { ReactNode } from 'react';
 
 interface User {
   id: string;
@@ -15,9 +16,11 @@ interface AuthContextType {
   isAdmin: boolean;
 }
 
+const AuthContext = createContext<AuthContextType | null>(null);
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
-export const useAuth = (): AuthContextType => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
@@ -64,7 +67,7 @@ export const useAuth = (): AuthContextType => {
     localStorage.removeItem('auth_user');
   };
 
-  return {
+  const contextValue: AuthContextType = {
     user,
     token,
     login,
@@ -72,4 +75,18 @@ export const useAuth = (): AuthContextType => {
     isAuthenticated: !!token,
     isAdmin: user?.role === 'admin',
   };
+
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return context;
 };
