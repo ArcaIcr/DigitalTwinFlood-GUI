@@ -1,4 +1,6 @@
-export const Header = ({ riskLevel }: { riskLevel: 'Low' | 'Moderate' | 'High' }) => {
+import { LogOut } from 'lucide-react';
+
+export const Header = ({ riskLevel, onLogout }: { riskLevel: 'Low' | 'Moderate' | 'High'; onLogout: () => void }) => {
   const getBadgeColor = () => {
     switch (riskLevel) {
       case 'High': return 'bg-red-900/50 text-red-400 border-red-800';
@@ -25,6 +27,13 @@ export const Header = ({ riskLevel }: { riskLevel: 'Low' | 'Moderate' | 'High' }
           <div className={`w-2 h-2 rounded-full ${riskLevel === 'High' ? 'bg-red-500 animate-pulse' : riskLevel === 'Moderate' ? 'bg-amber-500' : 'bg-emerald-500'}`}></div>
           {riskLevel.toUpperCase()}
         </div>
+        <button
+          onClick={onLogout}
+          className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-md border border-slate-700 transition-colors cursor-pointer"
+        >
+          <LogOut className="w-4 h-4" />
+          Logout
+        </button>
       </div>
     </header>
   );

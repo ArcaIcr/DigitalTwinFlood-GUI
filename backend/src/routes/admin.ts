@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import { getThresholds, updateThresholds, getRainfallHistory, getSimulation, getNodes } from '../data/simulation.js';
+import { requireRole } from '../data/users.js';
 
 const router = Router();
+
+// Apply authentication middleware to all admin routes
+router.use(requireRole(['admin']));
 
 // GET /api/admin/thresholds
 router.get('/thresholds', (req, res) => {

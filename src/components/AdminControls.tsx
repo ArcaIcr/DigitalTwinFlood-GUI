@@ -1,5 +1,6 @@
-import { FileText, Settings2, Download, X } from 'lucide-react';
+import { Settings2, Download, X, Lock } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
 
 interface RiskThresholds {
   moderate_threshold: number;
@@ -7,6 +8,7 @@ interface RiskThresholds {
 }
 
 const AdminControls = () => {
+  const { token, isAuthenticated, isAdmin } = useAuth();
   const [showThresholdDialog, setShowThresholdDialog] = useState(false);
   const [thresholds, setThresholds] = useState<RiskThresholds>({
     moderate_threshold: 20,
@@ -17,7 +19,11 @@ const AdminControls = () => {
 
   const handleGenerateReport = async (format: 'json' | 'csv') => {
     try {
-      const response = await fetch(`http://localhost:3001/api/admin/report?format=${format}`);
+      const response = await fetch(`http://localhost:3001/api/admin/report?format=${format}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (!response.ok) throw new Error('Failed to generate report');
       
       if (format === 'csv') {
@@ -44,18 +50,23 @@ const AdminControls = () => {
       }
     } catch (error) {
       console.error('Failed to generate report:', error);
-      alert('Failed to generate report');
+      alert('Failed to generate report - authentication required');
     }
   };
 
   const handleLoadThresholds = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/admin/thresholds');
+      const response = await fetch('http://localhost:3001/api/admin/thresholds', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (!response.ok) throw new Error('Failed to load thresholds');
       const data = await response.json();
       setThresholds(data);
     } catch (error) {
       console.error('Failed to load thresholds:', error);
+      alert('Failed to load thresholds - authentication required');
     }
   };
 
@@ -64,7 +75,10 @@ const AdminControls = () => {
     try {
       const response = await fetch('http://localhost:3001/api/admin/thresholds', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
         body: JSON.stringify(thresholds),
       });
       if (!response.ok) throw new Error('Failed to save thresholds');
@@ -72,7 +86,7 @@ const AdminControls = () => {
       setTimeout(() => setSaveMessage(''), 3000);
     } catch (error) {
       console.error('Failed to save thresholds:', error);
-      setSaveMessage('Failed to save thresholds');
+      setSaveMessage('Failed to save thresholds - authentication required');
       setTimeout(() => setSaveMessage(''), 3000);
     } finally {
       setIsSaving(false);
@@ -80,9 +94,30 @@ const AdminControls = () => {
   };
 
   const handleOpenThresholdDialog = async () => {
+    if (!isAuthenticated) {
+      alert('Please login to access admin features');
+      return;
+    }
     await handleLoadThresholds();
     setShowThresholdDialog(true);
   };
+
+  if (!isAuthenticated || !isAdmin) {
+    return (
+      <div className="rounded-lg border border-slate-800 bg-slate-900 overflow-hidden flex flex-col">
+        <div className="bg-slate-800/50 px-4 py-3 border-b border-slate-800">
+          <h3 className="text-sm font-semibold text-slate-200">Administrator Actions</h3>
+        </div>
+        
+        <div className="p-4 flex flex-col gap-3">
+          <div className="flex items-center justify-center gap-2 py-6 text-slate-500">
+            <Lock className="w-5 h-5" />
+            <span className="text-sm">Login required for admin access</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

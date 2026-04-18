@@ -1,10 +1,17 @@
 import Header from './components/Header'
 import WebGLCanvas from './components/WebGLCanvas'
 import Sidebar from './components/Sidebar'
+import Login from './components/Login'
 import { useDigitalTwinData } from './hooks/useDigitalTwinData'
+import { useAuth } from './hooks/useAuth'
 
 function App() {
   const { rainfall, simulation, nodes, isLoading, error } = useDigitalTwinData();
+  const { isAuthenticated, logout } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Login />;
+  }
 
   if (isLoading) {
     return (
@@ -23,6 +30,9 @@ function App() {
         <div className="text-center">
           <p className="text-red-400 mb-2">Error loading data</p>
           <p className="text-slate-500">{error}</p>
+          <button onClick={logout} className="mt-4 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm rounded-md border border-slate-700 cursor-pointer">
+            Logout
+          </button>
         </div>
       </div>
     );
@@ -32,13 +42,16 @@ function App() {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-slate-950 text-slate-200">
         <p className="text-slate-400">Waiting for data...</p>
+        <button onClick={logout} className="mt-4 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm rounded-md border border-slate-700 cursor-pointer">
+          Logout
+        </button>
       </div>
     );
   }
 
   return (
     <div className="h-screen w-screen flex flex-col bg-slate-950 text-slate-200 font-sans overflow-x-hidden overflow-y-auto lg:overflow-hidden">
-      <Header riskLevel={simulation.risk_level} />
+      <Header riskLevel={simulation.risk_level} onLogout={logout} />
       <div className="flex-1 flex flex-col lg:flex-row relative">
         <main className="flex-1 min-h-[50vh] lg:min-h-0 relative p-4 lg:p-6 bg-slate-900/50 shadow-[inset_0_0_80px_rgba(0,0,0,0.5)] flex flex-col border-b lg:border-b-0 border-slate-800">
           <WebGLCanvas />

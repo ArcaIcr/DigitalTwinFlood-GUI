@@ -28,3 +28,11 @@ export interface RiskThresholds {
   moderate_threshold: number; // mm/hr
   high_threshold: number; // mm/hr
 }
+
+export interface User {
+  id: string;
+  username: string;
+  password: string; // hashed
+  role: 'admin' | 'viewer';
+  created_at: string;
+}
