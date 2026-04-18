@@ -34,6 +34,7 @@ app.listen(PORT, () => {
   console.log(`📡 API endpoints:`);
   console.log(`   GET  /api/telemetry/rainfall`);
   console.log(`   GET  /api/telemetry/simulation`);
+  console.log(`   POST /api/telemetry/sensor-data`);
   console.log(`   GET  /api/nodes`);
   console.log(`   POST /api/nodes/:id/status`);
   console.log(`   GET  /api/admin/thresholds`);
