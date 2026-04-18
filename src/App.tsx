@@ -4,7 +4,37 @@ import Sidebar from './components/Sidebar'
 import { useDigitalTwinData } from './hooks/useDigitalTwinData'
 
 function App() {
-  const { rainfall, simulation, nodes } = useDigitalTwinData();
+  const { rainfall, simulation, nodes, isLoading, error } = useDigitalTwinData();
+
+  if (isLoading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-slate-950 text-slate-200">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading Digital Twin...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-slate-950 text-slate-200">
+        <div className="text-center">
+          <p className="text-red-400 mb-2">Error loading data</p>
+          <p className="text-slate-500">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!rainfall || !simulation) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-slate-950 text-slate-200">
+        <p className="text-slate-400">Waiting for data...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen w-screen flex flex-col bg-slate-950 text-slate-200 font-sans overflow-x-hidden overflow-y-auto lg:overflow-hidden">
